@@ -80,20 +80,6 @@ Menu.ClipsDescendants = true
 Menu.Position = UDim2.new(0, 0, 0, 25)
 Menu.Size = UDim2.new(1, 0, 0, 30)
 
-Button1.Name = tostring(math.random(100000, 999999))
-Button1.Parent = Menu
-Button1.AnchorPoint = Vector2.new(0, 0.5)
-Button1.BackgroundColor3 = Color3.fromRGB(25, 27, 31)
-Button1.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button1.BorderSizePixel = 0
-Button1.ClipsDescendants = true
-Button1.Position = UDim2.new(0, 0, 0.5, 0)
-Button1.Size = UDim2.new(0, 50, 1, 0)
-Button1.Font = Enum.Font.Ubuntu
-Button1.Text = "File"
-Button1.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button1.TextSize = 16.000
-
 UIListLayout.Parent = Menu
 UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -138,42 +124,6 @@ Button1_2.Font = Enum.Font.Ubuntu
 Button1_2.Text = "Editor"
 Button1_2.TextColor3 = Color3.fromRGB(230, 230, 230)
 Button1_2.TextSize = 16.000
-
-Button2.Name = tostring(math.random(100000, 999999))
-Button2.Parent = Nav
-Button2.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-Button2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button2.BorderSizePixel = 0
-Button2.ClipsDescendants = true
-Button2.Size = UDim2.new(0, 70, 1, 0)
-Button2.Font = Enum.Font.Ubuntu
-Button2.Text = "Console"
-Button2.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button2.TextSize = 16.000
-
-Button3.Name = tostring(math.random(100000, 999999))
-Button3.Parent = Nav
-Button3.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-Button3.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button3.BorderSizePixel = 0
-Button3.ClipsDescendants = true
-Button3.Size = UDim2.new(0, 70, 1, 0)
-Button3.Font = Enum.Font.Ubuntu
-Button3.Text = "Settings"
-Button3.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button3.TextSize = 16.000
-
-Button4.Name = tostring(math.random(100000, 999999))
-Button4.Parent = Nav
-Button4.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-Button4.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button4.BorderSizePixel = 0
-Button4.ClipsDescendants = true
-Button4.Size = UDim2.new(0, 70, 1, 0)
-Button4.Font = Enum.Font.Ubuntu
-Button4.Text = "Themes"
-Button4.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button4.TextSize = 16.000
 
 Content.Name = tostring(math.random(100000, 999999))
 Content.Parent = Main
@@ -306,5 +256,7 @@ Button3_2.MouseButton1Click:connect(function()
 		wait(0.5)
 		Title.Text = "z4trox executor - Injected"
 		injected = true
+	  wait(1)
+	  Title.Text = "z4trox executor"
 	end
 end)
