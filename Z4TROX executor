@@ -46,7 +46,7 @@ Main.BorderSizePixel = 0
 Main.ClipsDescendants = true
 Main.Position = UDim2.new(0.5, 0, 0.5, 0)
 Main.Selectable = true
-Main.Size = UDim2.new(0, 550, 0, 380)
+Main.Size = UDim2.new(0, 350, 0, 300)
 Main.Draggable = true
 
 TopBar.Name = tostring(math.random(100000, 999999))
@@ -257,6 +257,6 @@ Button3_2.MouseButton1Click:connect(function()
 		Title.Text = "z4trox executor - Injected"
 		injected = true
 	  wait(1)
-	  Title.Text = "z4trox executor"
+	  Title.Text = "z4trox executor | discord.gg/SQpfRUBfB7"
 	end
 end)
