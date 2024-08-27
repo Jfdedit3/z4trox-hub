@@ -246,7 +246,7 @@ Button3_2.MouseButton1Click:connect(function()
 	if injected == false then
 		Title.Text = "z4trox executor - Getting login token."
 		wait(3)
-		Title.Text = "z4trox executor - Version: 6b63ea89d2e54fd7 | LIVE"
+		Title.Text = "z4trox executor - Version: 38fjs9Jd93Mz91"
 		wait(1)
 		Title.Text = "z4trox executor - Setting Up."
 		wait(0.5)
