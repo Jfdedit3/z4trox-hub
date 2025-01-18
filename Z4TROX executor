@@ -1,38 +1,53 @@
 local ToggleKeybind = Enum.KeyCode.RightAlt
 local DeleteKeybind = Enum.KeyCode.Delete
 
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Créer un effet de lueur
+local function CreateGlow(parent)
+    local glow = Instance.new("ImageLabel")
+    glow.Name = tostring(math.random(100000, 999999))
+    glow.BackgroundTransparency = 1
+    glow.Image = "rbxassetid://4996891970"
+    glow.ImageColor3 = Color3.fromRGB(0, 225, 255)
+    glow.ImageTransparency = 0.85
+    glow.Size = UDim2.new(1, 20, 1, 20)
+    glow.Position = UDim2.new(0, -10, 0, -10)
+    glow.Parent = parent
+end
+
+local function CreateButtonHoverEffect(button)
+    button.MouseEnter:Connect(function()
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(button, tweenInfo, {
+            BackgroundColor3 = Color3.fromRGB(72, 77, 181),
+            TextColor3 = Color3.fromRGB(255, 255, 255)
+        })
+        tween:Play()
+    end)
+
+    button.MouseLeave:Connect(function()
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(button, tweenInfo, {
+            BackgroundColor3 = Color3.fromRGB(42, 47, 91),
+            TextColor3 = Color3.fromRGB(230, 230, 230)
+        })
+        tween:Play()
+    end)
+end
+
+-- Interface principale
 local Krampus = Instance.new("ScreenGui")
 local Main = Instance.new("Frame")
 local TopBar = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
-local Menu = Instance.new("Frame")
-local Button1 = Instance.new("TextButton")
-local UIListLayout = Instance.new("UIListLayout")
-local Nav = Instance.new("Frame")
-local UIListLayout_2 = Instance.new("UIListLayout")
-local Icon = Instance.new("ImageButton")
-local Button1_2 = Instance.new("TextButton")
-local Button2 = Instance.new("TextButton")
-local Button3 = Instance.new("TextButton")
-local Button4 = Instance.new("TextButton")
-local Content = Instance.new("Frame")
+local ContentArea = Instance.new("Frame")
+local ScrollingFrame = Instance.new("ScrollingFrame")
 local TextBox = Instance.new("TextBox")
-local UIPadding = Instance.new("UIPadding")
 local ButtonHolder = Instance.new("Frame")
-local UIListLayout_3 = Instance.new("UIListLayout")
-local Button3_2 = Instance.new("TextButton")
-local Button1_3 = Instance.new("TextButton")
-local Button2_2 = Instance.new("TextButton")
-local UserInputService = game:GetService("UserInputService")
 
-local function RandomizeNames(parent)
-	for _, obj in ipairs(parent:GetDescendants()) do
-		if obj:IsA("GuiObject") then
-			obj.Name = tostring(math.random(100000, 999999))
-		end
-	end
-end
-
+-- Configuration de base
 Krampus.Name = tostring(math.random(100000, 999999))
 Krampus.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
@@ -40,223 +55,179 @@ Main.Name = tostring(math.random(100000, 999999))
 Main.Parent = Krampus
 Main.Active = true
 Main.AnchorPoint = Vector2.new(0.5, 0.5)
-Main.BackgroundColor3 = Color3.fromRGB(21, 22, 26)
-Main.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Main.BorderSizePixel = 0
+Main.BackgroundColor3 = Color3.fromRGB(15, 16, 30)
+Main.BorderColor3 = Color3.fromRGB(0, 225, 255)
+Main.BorderSizePixel = 1
 Main.ClipsDescendants = true
 Main.Position = UDim2.new(0.5, 0, 0.5, 0)
-Main.Selectable = true
 Main.Size = UDim2.new(0, 350, 0, 300)
 Main.Draggable = true
 
+-- Style futuriste pour la barre supérieure
 TopBar.Name = tostring(math.random(100000, 999999))
 TopBar.Parent = Main
-TopBar.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
-TopBar.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TopBar.BorderSizePixel = 0
-TopBar.ClipsDescendants = true
+TopBar.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
+TopBar.BorderColor3 = Color3.fromRGB(0, 225, 255)
+TopBar.BorderSizePixel = 1
 TopBar.Size = UDim2.new(1, 0, 0, 25)
 
 Title.Name = tostring(math.random(100000, 999999))
 Title.Parent = TopBar
-Title.AnchorPoint = Vector2.new(0.5, 0)
-Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundTransparency = 1.000
-Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Title.BorderSizePixel = 0
-Title.Position = UDim2.new(0.5, 0, 0, 0)
-Title.Size = UDim2.new(0.5, 0, 1, 0)
-Title.Font = Enum.Font.Ubuntu
-Title.Text = "z4trox executor"
-Title.TextColor3 = Color3.fromRGB(230, 230, 230)
-Title.TextSize = 16.000
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Size = UDim2.new(1, -20, 1, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "Z4TROX EXECUTOR"
+Title.TextColor3 = Color3.fromRGB(0, 225, 255)
+Title.TextSize = 14
 
-Menu.Name = tostring(math.random(100000, 999999))
-Menu.Parent = Main
-Menu.BackgroundColor3 = Color3.fromRGB(25, 27, 31)
-Menu.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Menu.BorderSizePixel = 0
-Menu.ClipsDescendants = true
-Menu.Position = UDim2.new(0, 0, 0, 25)
-Menu.Size = UDim2.new(1, 0, 0, 30)
+-- Zone de contenu principale
+ContentArea.Name = tostring(math.random(100000, 999999))
+ContentArea.Parent = Main
+ContentArea.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
+ContentArea.BorderColor3 = Color3.fromRGB(0, 225, 255)
+ContentArea.BorderSizePixel = 1
+ContentArea.Position = UDim2.new(0, 10, 0, 35)
+ContentArea.Size = UDim2.new(1, -20, 1, -85)
 
-UIListLayout.Parent = Menu
-UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-UIListLayout.Padding = UDim.new(0, 5)
+-- ScrollingFrame pour le défilement
+ScrollingFrame.Name = tostring(math.random(100000, 999999))
+ScrollingFrame.Parent = ContentArea
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(25, 26, 40)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0, 5, 0, 5)
+ScrollingFrame.Size = UDim2.new(1, -10, 1, -10)
+ScrollingFrame.ScrollBarThickness = 4
+ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 225, 255)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 
-Nav.Name = tostring(math.random(100000, 999999))
-Nav.Parent = Main
-Nav.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Nav.BackgroundTransparency = 1.000
-Nav.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Nav.BorderSizePixel = 0
-Nav.ClipsDescendants = true
-Nav.Position = UDim2.new(0, 0, 0, 65)
-Nav.Size = UDim2.new(1, 0, 0, 30)
-
-UIListLayout_2.Parent = Nav
-UIListLayout_2.FillDirection = Enum.FillDirection.Horizontal
-UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout_2.VerticalAlignment = Enum.VerticalAlignment.Center
-UIListLayout_2.Padding = UDim.new(0, 5)
-
-Icon.Name = tostring(math.random(100000, 999999))
-Icon.Parent = Nav
-Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Icon.BackgroundTransparency = 1.000
-Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Icon.BorderSizePixel = 0
-Icon.ClipsDescendants = true
-Icon.Size = UDim2.new(0, 30, 1, 0)
-Icon.Image = "http://www.roblox.com/asset/?id=6031091004"
-Icon.ImageColor3 = Color3.fromRGB(140, 142, 146)
-
-Button1_2.Name = tostring(math.random(100000, 999999))
-Button1_2.Parent = Nav
-Button1_2.BackgroundColor3 = Color3.fromRGB(28, 30, 34)
-Button1_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button1_2.BorderSizePixel = 0
-Button1_2.ClipsDescendants = true
-Button1_2.Size = UDim2.new(0, 60, 1, 0)
-Button1_2.Font = Enum.Font.Ubuntu
-Button1_2.Text = "Editor"
-Button1_2.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button1_2.TextSize = 16.000
-
-Content.Name = tostring(math.random(100000, 999999))
-Content.Parent = Main
-Content.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Content.BackgroundTransparency = 1.000
-Content.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Content.BorderSizePixel = 0
-Content.ClipsDescendants = true
-Content.Position = UDim2.new(0, 0, 0, 105)
-Content.Size = UDim2.new(1, 0, 1, -145)
-
-TextBox.Parent = Content
-TextBox.BackgroundColor3 = Color3.fromRGB(41, 40, 44)
-TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextBox.BorderSizePixel = 0
-TextBox.ClipsDescendants = true
-TextBox.Position = UDim2.new(0, 10, 0, 0)
-TextBox.Size = UDim2.new(1, -20, 1, 0)
-TextBox.Font = Enum.Font.Unknown
+-- TextBox améliorée avec défilement automatique
+TextBox.Parent = ScrollingFrame
+TextBox.BackgroundTransparency = 1
+TextBox.Size = UDim2.new(1, -10, 1, 0)
+TextBox.Position = UDim2.new(0, 5, 0, 0)
+TextBox.Font = Enum.Font.Code
 TextBox.MultiLine = true
 TextBox.ClearTextOnFocus = false
 TextBox.PlaceholderText = "-- Made By Z4trox"
+TextBox.PlaceholderColor3 = Color3.fromRGB(80, 82, 100)
 TextBox.Text = ""
-TextBox.TextColor3 = Color3.fromRGB(230, 230, 230)
-TextBox.TextSize = 10.000
+TextBox.TextColor3 = Color3.fromRGB(220, 220, 255)
+TextBox.TextSize = 14
 TextBox.TextXAlignment = Enum.TextXAlignment.Left
 TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.AutomaticSize = Enum.AutomaticSize.Y
 
-UIPadding.Parent = TextBox
-UIPadding.PaddingLeft = UDim.new(0, 5)
-UIPadding.PaddingTop = UDim.new(0, 5)
+-- Mise à jour automatique de la taille du ScrollingFrame
+TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local textBounds = TextBox.TextBounds
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, textBounds.Y + 20)
+end)
 
+-- Boutons stylisés
 ButtonHolder.Name = tostring(math.random(100000, 999999))
 ButtonHolder.Parent = Main
-ButtonHolder.AnchorPoint = Vector2.new(0, 1)
-ButtonHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-ButtonHolder.BackgroundTransparency = 1.000
-ButtonHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
-ButtonHolder.BorderSizePixel = 0
-ButtonHolder.Position = UDim2.new(0, 10, 1, 0)
-ButtonHolder.Size = UDim2.new(1, -20, 0, 40)
+ButtonHolder.BackgroundTransparency = 1
+ButtonHolder.Position = UDim2.new(0, 10, 1, -45)
+ButtonHolder.Size = UDim2.new(1, -20, 0, 35)
 
-UIListLayout_3.Parent = ButtonHolder
-UIListLayout_3.FillDirection = Enum.FillDirection.Horizontal
-UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout_3.VerticalAlignment = Enum.VerticalAlignment.Center
-UIListLayout_3.Padding = UDim.new(0, 5)
+local function CreateStyledButton(text, size)
+    local button = Instance.new("TextButton")
+    button.Name = tostring(math.random(100000, 999999))
+    button.BackgroundColor3 = Color3.fromRGB(42, 47, 91)
+    button.BorderColor3 = Color3.fromRGB(0, 225, 255)
+    button.BorderSizePixel = 1
+    button.Size = UDim2.new(0, size, 0, 30)
+    button.Font = Enum.Font.GothamBold
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(230, 230, 230)
+    button.TextSize = 14
+    button.Parent = ButtonHolder
+    
+    CreateButtonHoverEffect(button)
+    return button
+end
 
-Button1_3.Name = tostring(math.random(100000, 999999))
-Button1_3.Parent = ButtonHolder
-Button1_3.BackgroundColor3 = Color3.fromRGB(42, 47, 51)
-Button1_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button1_3.BorderSizePixel = 0
-Button1_3.ClipsDescendants = true
-Button1_3.Size = UDim2.new(0, 80, 0, 30)
-Button1_3.Font = Enum.Font.Ubuntu
-Button1_3.Text = "Run Script"
-Button1_3.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button1_3.TextSize = 16.000
+local RunButton = CreateStyledButton("RUN SCRIPT", 80)
+local ClearButton = CreateStyledButton("CLEAR", 60)
+local InjectButton = CreateStyledButton("INJECT", 60)
 
-Button2_2.Name = tostring(math.random(100000, 999999))
-Button2_2.Parent = ButtonHolder
-Button2_2.BackgroundColor3 = Color3.fromRGB(42, 47, 51)
-Button2_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button2_2.BorderSizePixel = 0
-Button2_2.ClipsDescendants = true
-Button2_2.Size = UDim2.new(0, 60, 0, 30)
-Button2_2.Font = Enum.Font.Ubuntu
-Button2_2.Text = "Clear"
-Button2_2.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button2_2.TextSize = 16.000
+-- Position des boutons
+RunButton.Position = UDim2.new(0, 0, 0, 0)
+ClearButton.Position = UDim2.new(0, 85, 0, 0)
+InjectButton.Position = UDim2.new(0, 150, 0, 0)
 
-Button3_2.Name = tostring(math.random(100000, 999999))
-Button3_2.Parent = ButtonHolder
-Button3_2.BackgroundColor3 = Color3.fromRGB(42, 47, 51)
-Button3_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Button3_2.BorderSizePixel = 0
-Button3_2.ClipsDescendants = true
-Button3_2.Size = UDim2.new(0, 60, 0, 30)
-Button3_2.Font = Enum.Font.Ubuntu
-Button3_2.Text = "Inject"
-Button3_2.TextColor3 = Color3.fromRGB(230, 230, 230)
-Button3_2.TextSize = 16.000
-
+-- État d'injection
 local injected = false
 
+-- Animation de titre
+local function AnimateTitle(newText, duration)
+    local originalText = Title.Text
+    Title.Text = newText
+    wait(duration)
+    Title.Text = originalText
+end
+
+-- Gestionnaires d'événements
 UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == DeleteKeybind then
-		Krampus:Destroy()
-	end
+    if input.KeyCode == DeleteKeybind then
+        local fadeOut = TweenService:Create(Main, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+        fadeOut:Play()
+        fadeOut.Completed:Connect(function()
+            Krampus:Destroy()
+        end)
+    elseif input.KeyCode == ToggleKeybind then
+        Main.Visible = not Main.Visible
+    end
 end)
 
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == ToggleKeybind then
-		Main.Visible = not Main.Visible
-	end
+RunButton.MouseButton1Click:Connect(function()
+    if injected then
+        local success, error = pcall(function()
+            loadstring(TextBox.Text)()
+        end)
+        if not success then
+            AnimateTitle("Error: " .. error, 2)
+        end
+    else
+        AnimateTitle("NOT INJECTED", 2)
+    end
 end)
 
-Button1_3.MouseButton1Click:connect(function()
-	if injected == true then
-		loadstring(TextBox.Text)()
-	end
-	if injected == false then
-		Title.Text = "z4trox executor - Not Injected"
-		wait(2)
-		Title.Text = "z4trox executor"
-	end
+ClearButton.MouseButton1Click:Connect(function()
+    TextBox.Text = ""
 end)
 
-Button2_2.MouseButton1Click:connect(function()
-	TextBox.Text = ""
+InjectButton.MouseButton1Click:Connect(function()
+    if not injected then
+        local steps = {
+            {"GETTING LOGIN TOKEN", 1},
+            {"VERSION: 38fjs9Jd93Mz91", 0.5},
+            {"SETTING UP", 0.5},
+            {"AUTHENTICATING", 1},
+            {"INJECTION COMPLETE", 0.5},
+            {"READY", 0.5}
+        }
+        
+        for _, step in ipairs(steps) do
+            AnimateTitle(step[1], step[2])
+        end
+        
+        injected = true
+        Title.Text = "Z4TROX EXECUTOR | INJECTED"
+        
+        -- Effet de succès
+        local successGlow = CreateGlow(Main)
+        local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(successGlow, tweenInfo, {ImageTransparency = 1})
+        tween:Play()
+        tween.Completed:Connect(function()
+            successGlow:Destroy()
+        end)
+    else
+        AnimateTitle("ALREADY INJECTED", 2)
+    end
 end)
 
-Button3_2.MouseButton1Click:connect(function()
-	if injected == true then
-		Title.Text = "z4trox executor - Already Injected"
-		wait(2)
-		Title.Text = "z4trox executor - Injected"
-	end
-	if injected == false then
-		Title.Text = "z4trox executor - Getting login token."
-		wait(3)
-		Title.Text = "z4trox executor - Version: 38fjs9Jd93Mz91"
-		wait(1)
-		Title.Text = "z4trox executor - Setting Up."
-		wait(0.5)
-		Title.Text = "z4trox executor - Authenticating."
-		wait(1.5)
-		Title.Text = "z4trox executor - Done!"
-		wait(0.5)
-		Title.Text = "z4trox executor - Injected"
-		injected = true
-	  wait(1)
-	  Title.Text = "z4trox executor | discord.gg/SQpfRUBfB7"
-	end
-end)
+-- Initialisation des effets
+CreateGlow(Main)
