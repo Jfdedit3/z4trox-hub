@@ -3,231 +3,335 @@ local DeleteKeybind = Enum.KeyCode.Delete
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
--- Créer un effet de lueur
-local function CreateGlow(parent)
-    local glow = Instance.new("ImageLabel")
-    glow.Name = tostring(math.random(100000, 999999))
-    glow.BackgroundTransparency = 1
-    glow.Image = "rbxassetid://4996891970"
-    glow.ImageColor3 = Color3.fromRGB(0, 225, 255)
-    glow.ImageTransparency = 0.85
-    glow.Size = UDim2.new(1, 20, 1, 20)
-    glow.Position = UDim2.new(0, -10, 0, -10)
-    glow.Parent = parent
+-- Utility functions
+local function GenerateUID()
+    return tostring(math.random(100000, 999999))
 end
 
-local function CreateButtonHoverEffect(button)
-    button.MouseEnter:Connect(function()
-        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local tween = TweenService:Create(button, tweenInfo, {
-            BackgroundColor3 = Color3.fromRGB(72, 77, 181),
-            TextColor3 = Color3.fromRGB(255, 255, 255)
-        })
-        tween:Play()
-    end)
-
-    button.MouseLeave:Connect(function()
-        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local tween = TweenService:Create(button, tweenInfo, {
-            BackgroundColor3 = Color3.fromRGB(42, 47, 91),
-            TextColor3 = Color3.fromRGB(230, 230, 230)
-        })
-        tween:Play()
-    end)
+local function Tween(object, properties, duration, style, direction)
+    local tweenInfo = TweenInfo.new(duration or 0.3, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
+    local tween = TweenService:Create(object, tweenInfo, properties)
+    tween:Play()
+    return tween
 end
 
--- Interface principale
-local Krampus = Instance.new("ScreenGui")
-local Main = Instance.new("Frame")
-local TopBar = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local ContentArea = Instance.new("Frame")
-local ScrollingFrame = Instance.new("ScrollingFrame")
-local TextBox = Instance.new("TextBox")
-local ButtonHolder = Instance.new("Frame")
-
--- Configuration de base
-Krampus.Name = tostring(math.random(100000, 999999))
-Krampus.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-Main.Name = tostring(math.random(100000, 999999))
-Main.Parent = Krampus
-Main.Active = true
-Main.AnchorPoint = Vector2.new(0.5, 0.5)
-Main.BackgroundColor3 = Color3.fromRGB(15, 16, 30)
-Main.BorderColor3 = Color3.fromRGB(0, 225, 255)
-Main.BorderSizePixel = 1
-Main.ClipsDescendants = true
-Main.Position = UDim2.new(0.5, 0, 0.5, 0)
-Main.Size = UDim2.new(0, 350, 0, 300)
-Main.Draggable = true
-
--- Style futuriste pour la barre supérieure
-TopBar.Name = tostring(math.random(100000, 999999))
-TopBar.Parent = Main
-TopBar.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
-TopBar.BorderColor3 = Color3.fromRGB(0, 225, 255)
-TopBar.BorderSizePixel = 1
-TopBar.Size = UDim2.new(1, 0, 0, 25)
-
-Title.Name = tostring(math.random(100000, 999999))
-Title.Parent = TopBar
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.Size = UDim2.new(1, -20, 1, 0)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "Z4TROX EXECUTOR"
-Title.TextColor3 = Color3.fromRGB(0, 225, 255)
-Title.TextSize = 14
-
--- Zone de contenu principale
-ContentArea.Name = tostring(math.random(100000, 999999))
-ContentArea.Parent = Main
-ContentArea.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
-ContentArea.BorderColor3 = Color3.fromRGB(0, 225, 255)
-ContentArea.BorderSizePixel = 1
-ContentArea.Position = UDim2.new(0, 10, 0, 35)
-ContentArea.Size = UDim2.new(1, -20, 1, -85)
-
--- ScrollingFrame pour le défilement
-ScrollingFrame.Name = tostring(math.random(100000, 999999))
-ScrollingFrame.Parent = ContentArea
-ScrollingFrame.BackgroundColor3 = Color3.fromRGB(25, 26, 40)
-ScrollingFrame.BorderSizePixel = 0
-ScrollingFrame.Position = UDim2.new(0, 5, 0, 5)
-ScrollingFrame.Size = UDim2.new(1, -10, 1, -10)
-ScrollingFrame.ScrollBarThickness = 4
-ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 225, 255)
-ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-
--- TextBox améliorée avec défilement automatique
-TextBox.Parent = ScrollingFrame
-TextBox.BackgroundTransparency = 1
-TextBox.Size = UDim2.new(1, -10, 1, 0)
-TextBox.Position = UDim2.new(0, 5, 0, 0)
-TextBox.Font = Enum.Font.Code
-TextBox.MultiLine = true
-TextBox.ClearTextOnFocus = false
-TextBox.PlaceholderText = "-- Made By Z4trox"
-TextBox.PlaceholderColor3 = Color3.fromRGB(80, 82, 100)
-TextBox.Text = ""
-TextBox.TextColor3 = Color3.fromRGB(220, 220, 255)
-TextBox.TextSize = 14
-TextBox.TextXAlignment = Enum.TextXAlignment.Left
-TextBox.TextYAlignment = Enum.TextYAlignment.Top
-TextBox.AutomaticSize = Enum.AutomaticSize.Y
-
--- Mise à jour automatique de la taille du ScrollingFrame
-TextBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local textBounds = TextBox.TextBounds
-    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, textBounds.Y + 20)
-end)
-
--- Boutons stylisés
-ButtonHolder.Name = tostring(math.random(100000, 999999))
-ButtonHolder.Parent = Main
-ButtonHolder.BackgroundTransparency = 1
-ButtonHolder.Position = UDim2.new(0, 10, 1, -45)
-ButtonHolder.Size = UDim2.new(1, -20, 0, 35)
-
-local function CreateStyledButton(text, size)
-    local button = Instance.new("TextButton")
-    button.Name = tostring(math.random(100000, 999999))
-    button.BackgroundColor3 = Color3.fromRGB(42, 47, 91)
-    button.BorderColor3 = Color3.fromRGB(0, 225, 255)
-    button.BorderSizePixel = 1
-    button.Size = UDim2.new(0, size, 0, 30)
-    button.Font = Enum.Font.GothamBold
-    button.Text = text
-    button.TextColor3 = Color3.fromRGB(230, 230, 230)
-    button.TextSize = 14
-    button.Parent = ButtonHolder
+-- Enhanced visual effects
+local function CreateParticleEffect(parent)
+    local emitter = Instance.new("ParticleEmitter")
+    emitter.Texture = "rbxassetid://6883806528"
+    emitter.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 225, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))
+    })
+    emitter.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.1),
+        NumberSequenceKeypoint.new(1, 0)
+    })
+    emitter.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    emitter.Rate = 50
+    emitter.Rotation = NumberRange.new(-180, 180)
+    emitter.RotSpeed = NumberRange.new(-360, 360)
+    emitter.Speed = NumberRange.new(0.5, 2)
+    emitter.Lifetime = NumberRange.new(0.5, 1)
+    emitter.SpreadAngle = Vector2.new(-360, 360)
+    emitter.Parent = parent
     
-    CreateButtonHoverEffect(button)
-    return button
+    return emitter
 end
 
-local RunButton = CreateStyledButton("RUN SCRIPT", 80)
-local ClearButton = CreateStyledButton("CLEAR", 60)
-local InjectButton = CreateStyledButton("INJECT", 60)
-
--- Position des boutons
-RunButton.Position = UDim2.new(0, 0, 0, 0)
-ClearButton.Position = UDim2.new(0, 85, 0, 0)
-InjectButton.Position = UDim2.new(0, 150, 0, 0)
-
--- État d'injection
-local injected = false
-
--- Animation de titre
-local function AnimateTitle(newText, duration)
-    local originalText = Title.Text
-    Title.Text = newText
-    wait(duration)
-    Title.Text = originalText
-end
-
--- Gestionnaires d'événements
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == DeleteKeybind then
-        local fadeOut = TweenService:Create(Main, TweenInfo.new(0.5), {BackgroundTransparency = 1})
-        fadeOut:Play()
-        fadeOut.Completed:Connect(function()
-            Krampus:Destroy()
-        end)
-    elseif input.KeyCode == ToggleKeybind then
-        Main.Visible = not Main.Visible
-    end
-end)
-
-RunButton.MouseButton1Click:Connect(function()
-    if injected then
-        local success, error = pcall(function()
-            loadstring(TextBox.Text)()
-        end)
-        if not success then
-            AnimateTitle("Error: " .. error, 2)
-        end
-    else
-        AnimateTitle("NOT INJECTED", 2)
-    end
-end)
-
-ClearButton.MouseButton1Click:Connect(function()
-    TextBox.Text = ""
-end)
-
-InjectButton.MouseButton1Click:Connect(function()
-    if not injected then
-        local steps = {
-            {"GETTING LOGIN TOKEN", 1},
-            {"VERSION: 38fjs9Jd93Mz91", 0.5},
-            {"SETTING UP", 0.5},
-            {"AUTHENTICATING", 1},
-            {"INJECTION COMPLETE", 0.5},
-            {"READY", 0.5}
-        }
-        
-        for _, step in ipairs(steps) do
-            AnimateTitle(step[1], step[2])
-        end
-        
-        injected = true
-        Title.Text = "Z4TROX EXECUTOR | INJECTED"
-        
-        -- Effet de succès
-        local successGlow = CreateGlow(Main)
-        local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local tween = TweenService:Create(successGlow, tweenInfo, {ImageTransparency = 1})
-        tween:Play()
+local function CreateHologramEffect(parent)
+    local hologram = Instance.new("Frame")
+    hologram.BackgroundTransparency = 0.9
+    hologram.BackgroundColor3 = Color3.fromRGB(0, 225, 255)
+    hologram.BorderSizePixel = 0
+    hologram.Size = UDim2.new(1, 0, 0, 2)
+    hologram.Parent = parent
+    
+    local function animate()
+        local tween = Tween(hologram, {
+            Position = UDim2.new(0, 0, 1, 0),
+            BackgroundTransparency = 1
+        }, 2)
         tween.Completed:Connect(function()
-            successGlow:Destroy()
+            hologram.Position = UDim2.new(0, 0, 0, 0)
+            hologram.BackgroundTransparency = 0.9
+            animate()
         end)
-    else
-        AnimateTitle("ALREADY INJECTED", 2)
     end
-end)
+    
+    animate()
+    return hologram
+end
 
--- Initialisation des effets
-CreateGlow(Main)
+-- Enhanced UI Components
+local function CreateStyledContainer(name, parent)
+    local container = Instance.new("Frame")
+    container.Name = GenerateUID()
+    container.BackgroundColor3 = Color3.fromRGB(15, 16, 30)
+    container.BorderColor3 = Color3.fromRGB(0, 225, 255)
+    container.BorderSizePixel = 1
+    container.Parent = parent
+    
+    local cornerRadius = Instance.new("UICorner")
+    cornerRadius.CornerRadius = UDim.new(0, 6)
+    cornerRadius.Parent = container
+    
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, 10)
+    padding.PaddingRight = UDim.new(0, 10)
+    padding.PaddingTop = UDim.new(0, 10)
+    padding.PaddingBottom = UDim.new(0, 10)
+    padding.Parent = container
+    
+    return container
+end
+
+local function CreateTabSystem(parent)
+    local tabContainer = CreateStyledContainer("TabContainer", parent)
+    tabContainer.Size = UDim2.new(1, 0, 0, 30)
+    tabContainer.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
+    
+    local tabList = Instance.new("UIListLayout")
+    tabList.FillDirection = Enum.FillDirection.Horizontal
+    tabList.Padding = UDim.new(0, 5)
+    tabList.Parent = tabContainer
+    
+    return tabContainer
+end
+
+local function CreateTab(name, tabContainer)
+    local tab = Instance.new("TextButton")
+    tab.Name = GenerateUID()
+    tab.Size = UDim2.new(0, 100, 1, -10)
+    tab.BackgroundColor3 = Color3.fromRGB(42, 47, 91)
+    tab.BorderColor3 = Color3.fromRGB(0, 225, 255)
+    tab.BorderSizePixel = 1
+    tab.Text = name
+    tab.TextColor3 = Color3.fromRGB(230, 230, 230)
+    tab.Font = Enum.Font.GothamBold
+    tab.TextSize = 14
+    tab.Parent = tabContainer
+    
+    local cornerRadius = Instance.new("UICorner")
+    cornerRadius.CornerRadius = UDim.new(0, 4)
+    cornerRadius.Parent = tab
+    
+    return tab
+end
+
+-- Main UI Construction
+local function CreateExecutorUI()
+    local Executor = Instance.new("ScreenGui")
+    Executor.Name = GenerateUID()
+    Executor.Parent = CoreGui
+    
+    local Main = CreateStyledContainer("Main", Executor)
+    Main.Position = UDim2.new(0.5, -225, 0.5, -200)
+    Main.Size = UDim2.new(0, 450, 0, 400)
+    Main.Active = true
+    Main.Draggable = true
+    
+    -- Create modern topbar
+    local TopBar = CreateStyledContainer("TopBar", Main)
+    TopBar.Size = UDim2.new(1, -20, 0, 40)
+    TopBar.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
+    
+    local Title = Instance.new("TextLabel")
+    Title.Name = GenerateUID()
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.Size = UDim2.new(1, -20, 1, 0)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = "Z4TROX EXECUTOR V2"
+    Title.TextColor3 = Color3.fromRGB(0, 225, 255)
+    Title.TextSize = 18
+    Title.Parent = TopBar
+    
+    -- Create tab system
+    local TabSystem = CreateTabSystem(Main)
+    TabSystem.Position = UDim2.new(0, 10, 0, 50)
+    
+    local ScriptsTab = CreateTab("Scripts", TabSystem)
+    local SettingsTab = CreateTab("Settings", TabSystem)
+    local ConsoleTab = CreateTab("Console", TabSystem)
+    
+    -- Create main content area
+    local ContentArea = CreateStyledContainer("ContentArea", Main)
+    ContentArea.Position = UDim2.new(0, 10, 0, 90)
+    ContentArea.Size = UDim2.new(1, -20, 1, -140)
+    ContentArea.BackgroundColor3 = Color3.fromRGB(20, 22, 40)
+    
+    -- Create enhanced editor
+    local Editor = Instance.new("ScrollingFrame")
+    Editor.Name = GenerateUID()
+    Editor.BackgroundColor3 = Color3.fromRGB(25, 26, 40)
+    Editor.BorderSizePixel = 0
+    Editor.Position = UDim2.new(0, 5, 0, 5)
+    Editor.Size = UDim2.new(1, -10, 1, -10)
+    Editor.ScrollBarThickness = 4
+    Editor.ScrollBarImageColor3 = Color3.fromRGB(0, 225, 255)
+    Editor.Parent = ContentArea
+    
+    local TextBox = Instance.new("TextBox")
+    TextBox.Name = GenerateUID()
+    TextBox.BackgroundTransparency = 1
+    TextBox.Size = UDim2.new(1, -10, 1, 0)
+    TextBox.Position = UDim2.new(0, 5, 0, 0)
+    TextBox.Font = Enum.Font.Code
+    TextBox.MultiLine = true
+    TextBox.ClearTextOnFocus = false
+    TextBox.PlaceholderText = "-- Z4TROX EXECUTOR V2 --\n-- Enhanced with modern features and effects --"
+    TextBox.PlaceholderColor3 = Color3.fromRGB(80, 82, 100)
+    TextBox.Text = ""
+    TextBox.TextColor3 = Color3.fromRGB(220, 220, 255)
+    TextBox.TextSize = 14
+    TextBox.TextXAlignment = Enum.TextXAlignment.Left
+    TextBox.TextYAlignment = Enum.TextYAlignment.Top
+    TextBox.Parent = Editor
+    
+    -- Create button container
+    local ButtonContainer = CreateStyledContainer("ButtonContainer", Main)
+    ButtonContainer.Position = UDim2.new(0, 10, 1, -45)
+    ButtonContainer.Size = UDim2.new(1, -20, 0, 35)
+    ButtonContainer.BackgroundTransparency = 1
+    
+    -- Create enhanced buttons
+    local function CreateEnhancedButton(text, position)
+        local button = Instance.new("TextButton")
+        button.Name = GenerateUID()
+        button.Position = position
+        button.Size = UDim2.new(0, 100, 1, 0)
+        button.BackgroundColor3 = Color3.fromRGB(42, 47, 91)
+        button.BorderColor3 = Color3.fromRGB(0, 225, 255)
+        button.BorderSizePixel = 1
+        button.Font = Enum.Font.GothamBold
+        button.Text = text
+        button.TextColor3 = Color3.fromRGB(230, 230, 230)
+        button.TextSize = 14
+        button.Parent = ButtonContainer
+        
+        local cornerRadius = Instance.new("UICorner")
+        cornerRadius.CornerRadius = UDim.new(0, 4)
+        cornerRadius.Parent = button
+        
+        -- Add hover and click effects
+        button.MouseEnter:Connect(function()
+            Tween(button, {
+                BackgroundColor3 = Color3.fromRGB(72, 77, 181),
+                TextColor3 = Color3.fromRGB(255, 255, 255)
+            })
+        end)
+        
+        button.MouseLeave:Connect(function()
+            Tween(button, {
+                BackgroundColor3 = Color3.fromRGB(42, 47, 91),
+                TextColor3 = Color3.fromRGB(230, 230, 230)
+            })
+        end)
+        
+        button.MouseButton1Down:Connect(function()
+            Tween(button, {
+                BackgroundColor3 = Color3.fromRGB(32, 37, 71)
+            }, 0.1)
+        end)
+        
+        button.MouseButton1Up:Connect(function()
+            Tween(button, {
+                BackgroundColor3 = Color3.fromRGB(72, 77, 181)
+            }, 0.1)
+        end)
+        
+        return button
+    end
+    
+    local RunButton = CreateEnhancedButton("EXECUTE", UDim2.new(0, 0, 0, 0))
+    local ClearButton = CreateEnhancedButton("CLEAR", UDim2.new(0, 110, 0, 0))
+    local InjectButton = CreateEnhancedButton("INJECT", UDim2.new(0, 220, 0, 0))
+    
+    -- Add visual effects
+    CreateHologramEffect(Main)
+    local particleEmitter = CreateParticleEffect(Main)
+    
+    -- Implement core functionality
+    local injected = false
+    
+    local function AnimateTitle(newText, duration)
+        local originalText = Title.Text
+        Title.Text = newText
+        wait(duration)
+        Title.Text = originalText
+    end
+    
+    RunButton.MouseButton1Click:Connect(function()
+        if injected then
+            local success, error = pcall(function()
+                loadstring(TextBox.Text)()
+            end)
+            if not success then
+                AnimateTitle("Error: " .. error, 2)
+            else
+                local successParticles = CreateParticleEffect(RunButton)
+                wait(1)
+                successParticles:Destroy()
+            end
+        else
+            AnimateTitle("NOT INJECTED", 2)
+        end
+    end)
+    
+    ClearButton.MouseButton1Click:Connect(function()
+        TextBox.Text = ""
+        local clearParticles = CreateParticleEffect(ClearButton)
+        wait(0.5)
+        clearParticles:Destroy()
+    end)
+    
+    InjectButton.MouseButton1Click:Connect(function()
+        if not injected then
+            local steps = {
+                {"INITIALIZING...", 0.5},
+                {"BYPASSING SECURITY...", 0.7},
+                {"ESTABLISHING CONNECTION...", 0.8},
+                {"AUTHENTICATING...", 0.6},
+                {"INJECTION SUCCESSFUL", 1}
+            }
+            
+            for _, step in ipairs(steps) do
+                AnimateTitle(step[1], step[2])
+                local stepParticles = CreateParticleEffect(InjectButton)
+                wait(step[2])
+                stepParticles:Destroy()
+            end
+            
+            injected = true
+            Title.Text = "Z4TROX EXECUTOR V2 | INJECTED"
+        else
+            AnimateTitle("ALREADY INJECTED", 2)
+        end
+    end)
+    
+    -- Add keybind functionality
+    UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == DeleteKeybind then
+            Tween(Main, {
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0.5, -225, 1.5, 0)
+            }, 0.5).Completed:Connect(function()
+                Executor:Destroy()
+            end)
+        elseif input.KeyCode == ToggleKeybind then
+            Main.Visible = not Main.Visible
+        end
+    end)
+    
+    return Executor
+end
+
+-- Initialize the executor
+local executor = CreateExecutorUI()
